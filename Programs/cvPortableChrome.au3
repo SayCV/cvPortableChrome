@@ -1,4 +1,4 @@
-﻿#NoTrayIcon
+﻿#NoTrayIcon ; based on https://github.com/cnjackchen/my-chrome
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=app.ico
 #AutoIt3Wrapper_OutFile=cvpChrome.exe

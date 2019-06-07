@@ -1,0 +1,7 @@
+.stamp/
+*.exe
+*.dll
+*.ini
+*_stripped.au3
+*.vbs
+*.log

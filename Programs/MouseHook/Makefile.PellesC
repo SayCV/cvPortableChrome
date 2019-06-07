@@ -1,0 +1,141 @@
+#
+# GNU makefile for EnvTool (PellesC 32/64-bit).
+#
+USE_DEBUG     ?= 0
+USE_64BIT     ?= 1
+USE_POCRT_DLL ?= 0
+
+POCC_ROOT = $(realpath $(PELLESC))
+
+#
+# PellesC should work without having it's stuff in the PATH or INCLUDE etc.
+#
+LD = $(POCC_ROOT)/bin/polink
+RC = $(POCC_ROOT)/bin/porc
+CC = $(POCC_ROOT)/bin/pocc
+
+CFLAGS = -Tx86-coff -Ot -Ob1 -fp:precise -W1 -Gr -Ze          \
+         -I$(POCC_ROOT)/include -I$(POCC_ROOT)/include/win
+
+CFLAGS64 = -Tx64-coff -Ot -Ob1 -fp:precise -W1 -Gr -Ze        \
+         -I$(POCC_ROOT)/include -I$(POCC_ROOT)/include/win
+
+# CFLAGS += -DSTRSAFE_NO_DEPRECATE
+
+#
+# Avoid warning in <win/malloc.h>
+#
+#CFLAGS += -D_MALLOC_H
+#CFLAGS64 += -D_MALLOC_H
+
+LDFLAGS = -map -subsystem:windows
+LDFLAGS64 = -map -subsystem:windows
+
+RCFLAGS = -D__POCC__
+RCFLAGS64 = -D__POCC__
+
+ifeq ($(USE_POCRT_DLL),1)
+  CFLAGS += -MD
+  CFLAGS64 += -MD
+  CRT_LIB = pocrt
+else
+  #CFLAGS += -MT
+  #CFLAGS64 += -MT
+  CRT_LIB = crt
+endif
+
+ifeq ($(USE_DEBUG),1)
+  CFLAGS += -D_DEBUG
+  CFLAGS64 += -D_DEBUG
+else
+  #CFLAGS += -Ox
+  #CFLAGS64 += -Ox
+endif
+
+ifeq ($(USE_64BIT),1)
+  CFLAGS64  += -Tx64-coff
+  LDFLAGS64 += -machine:x64 -dll
+  RCFLAGS64 += -D_WIN64
+
+  EX_LIBS64 += $(addprefix $(POCC_ROOT)/lib/, \
+               $(CRT_LIB)64.lib Win64/kernel32.lib Win64/user32.lib Win64/gdi32.lib Win64/comctl32.lib Win64/comdlg32.lib Win64/advapi32.lib delayimp64.lib)
+endif
+  CFLAGS  += -Tx86-coff
+  LDFLAGS += -machine:x86 -dll
+  RCFLAGS += -D_WIN32
+
+  EX_LIBS += $(addprefix $(POCC_ROOT)/lib/, \
+             $(CRT_LIB).lib Win/kernel32.lib Win/user32.lib Win/gdi32.lib Win/comctl32.lib Win/comdlg32.lib Win/advapi32.lib delayimp.lib)
+
+
+SOURCES := DLL.c
+
+OBJECTS = $(notdir $(SOURCES:.c=.obj))
+OBJECTS64 = DLL64.obj
+
+all: cflags_PellesC.h ldflags_PellesC.h cflags64_PellesC.h ldflags64_PellesC.h hook.dll hook64.dll EXPORTS.DEF
+	cp --update hook.dll ..
+	cp --update hook64.dll ..
+	@echo '../hook.dll ../hook64.dll successfully built.'
+
+hook.dll: $(OBJECTS) EXPORTS.DEF
+	$(call link_EXE, $@, $^)
+
+hook64.dll: $(OBJECTS64) EXPORTS.DEF
+	$(call link_EXE64, $@, $^)
+
+DLL64.c: DLL.c
+	cp --update DLL.c DLL64.c
+	@echo
+
+DLL64.obj: DLL64.c
+	$(CC) -c $(CFLAGS64) $<
+	rm -f DLL64.c
+	@echo
+
+%.obj: %.c
+	$(CC) -c $(CFLAGS) $<
+	@echo
+
+%.i: %.c Makefile.PellesC
+	$(CC) -c -E $(CFLAGS) $< > $@
+	@echo
+
+clean:
+	rm -f $(OBJECTS) hook.dll cflags_PellesC.h ldflags_PellesC.h hook64.dll cflags64_PellesC.h ldflags64_PellesC.h
+	rm -f *.obj *.map *.exp *.lib *.tag *.tmp *.tmp64
+	@echo
+
+cflags_PellesC.h: Makefile.PellesC
+	echo 'const char *cflags = "$(CC) $(CFLAGS)";' > $@
+	@echo
+
+ldflags_PellesC.h: Makefile.PellesC
+	echo 'const char *ldflags = "$(LD) $(LDFLAGS) -out:hook.dll $(OBJECTS) $(EX_LIBS)";' > $@
+	@echo
+
+cflags64_PellesC.h: Makefile.PellesC
+	echo 'const char *cflags = "$(CC) $(CFLAGS64)";' > $@
+	@echo
+
+ldflags64_PellesC.h: Makefile.PellesC
+	echo 'const char *ldflags = "$(LD) $(LDFLAGS64) -out:hook64.dll $(OBJECTS64) $(EX_LIBS64)";' > $@
+	@echo
+
+#
+# arg1: $(1) = the .exe-file
+# arg2: $(2) = the .obj-files
+#
+define link_EXE
+  $(LD) $(LDFLAGS) -out:$(strip $(1)) $(2) $(EX_LIBS) > link.tmp
+  cat link.tmp >> $(1:.dll=.map)
+  #rm -f $(1:.dll=.obj)
+  @echo
+endef
+
+define link_EXE64
+  $(LD) $(LDFLAGS64) -out:$(strip $(1)) $(2) $(EX_LIBS64) > link.tmp64
+  cat link.tmp64 >> $(1:.dll=-64.map)
+  #rm -f $(1:.dll=.64.obj)
+  @echo
+endef

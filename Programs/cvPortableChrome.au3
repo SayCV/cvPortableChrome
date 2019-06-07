@@ -1,12 +1,12 @@
 ﻿#NoTrayIcon
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=app.ico
-#AutoIt3Wrapper_OutFile=cvPortableChrome.exe
+#AutoIt3Wrapper_OutFile=cvpChrome.exe
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_UseX64=y
 #AutoIt3Wrapper_Res_Description=Google Chrome Portable
 #AutoIt3Wrapper_Res_Fileversion=3.8.1.0
-#AutoIt3Wrapper_Res_LegalCopyright=Ideify<Ideify@gmail.com>
+#AutoIt3Wrapper_Res_LegalCopyright=https://github.com/SayCV/cvPortableChrome
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_AU3Check_Parameters=-q
 #AutoIt3Wrapper_Run_Au3Stripper=y
@@ -2184,7 +2184,7 @@ EndFunc   ;==>GUI_ShowLatestChromeVer
 
 ; 打开网站
 Func OpenWebsite()
-	ShellExecute("http://bbs.kafan.cn/thread-1725205-1-1.html")
+	ShellExecute("https://github.com/SayCV/cvPortableChrome")
 EndFunc   ;==>OpenWebsite
 
 ;~ 显示下载地址

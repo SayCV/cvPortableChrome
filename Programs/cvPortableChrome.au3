@@ -257,9 +257,9 @@ If Not $ChromeIsRunning And FileExists($ChromeDir & "\~updated") Then
 	ApplyUpdate()
 EndIf
 
-Local $scmdline = '"' & $ChromePath & '" ' & $PortableParam & ' ' & $Params
-ConsoleWrite($scmdline)
-MsgBox(0, "cvPC", $scmdline)
+; Local $scmdline = '"' & $ChromePath & '" ' & $PortableParam & ' ' & $Params
+; ConsoleWrite($scmdline)
+; MsgBox(0, "cvPC", $scmdline)
 ; start chrome
 $AppPID_Browser = Run('"' & $ChromePath & '" ' & $PortableParam & ' ' & $Params, $ChromeDir)
 

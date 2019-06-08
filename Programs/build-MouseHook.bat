@@ -56,7 +56,7 @@ echo [debug] [Action] Start.
 rem -------------------------------------
 
 cd MouseHook
-cmd
+
 make -f Makefile.PellesC >%TOPDIR%/%~n0.make.log 2>&1
 
 goto :_my_eof_

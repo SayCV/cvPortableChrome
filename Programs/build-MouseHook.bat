@@ -55,9 +55,11 @@ echo [debug] [Action] Start.
 :     Action Start
 rem -------------------------------------
 
+if not exist "%TOPDIR%/.logs" md %TOPDIR%/.logs
+
 cd MouseHook
 
-make -f Makefile.PellesC >%TOPDIR%/%~n0.make.log 2>&1
+make -f Makefile.PellesC >%TOPDIR%/.logs/%~n0.make.log 2>&1
 if not %errorlevel% == 0 set "error=make -f Makefile.PellesC ERROR..." && goto :eof_with_error
 
 goto :_my_eof_

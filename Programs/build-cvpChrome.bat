@@ -56,7 +56,9 @@ echo [debug] [Action] Start.
 :     Action Start
 rem -------------------------------------
 
-AutoIt3.exe "!AUTOIT_ROOTDIR!/Programs/SciTE/AutoIt3Wrapper/AutoIt3Wrapper.au3" /NoStatus /prod /in "!TOPDIR!/cvPortableChrome.au3"
+if not exist "%TOPDIR%/.logs" md %TOPDIR%/.logs
+
+AutoIt3.exe "!AUTOIT_ROOTDIR!/Programs/SciTE/AutoIt3Wrapper/AutoIt3Wrapper.au3" /NoStatus /prod /in "!TOPDIR!/cvPortableChrome.au3" >%TOPDIR%/.logs/%~n0.AutoIt.log 2>&1
 if not %errorlevel% == 0 set "error=AutoIt3 ERROR..." && goto :eof_with_error
 
 goto :_my_eof_

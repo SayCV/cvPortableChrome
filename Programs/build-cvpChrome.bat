@@ -49,16 +49,15 @@ SET "PELLESC=!PELLESC_ROOTDIR!"
 )
 rem -------------------------------------
 
+if "x1" == "x1" call "!WBK_ROOTDIR!/etc/skel/tpl.tools.env.AutoIt.bat"
 
 rem -------------------------------------
 echo [debug] [Action] Start.
 :     Action Start
 rem -------------------------------------
 
-cd MouseHook
-
-make -f Makefile.PellesC >%TOPDIR%/%~n0.make.log 2>&1
-if not %errorlevel% == 0 set "error=make -f Makefile.PellesC ERROR..." && goto :eof_with_error
+AutoIt3.exe "!AUTOIT_ROOTDIR!/Programs/SciTE/AutoIt3Wrapper/AutoIt3Wrapper.au3" /NoStatus /prod /in "!TOPDIR!/cvPortableChrome.au3"
+if not %errorlevel% == 0 set "error=AutoIt3 ERROR..." && goto :eof_with_error
 
 goto :_my_eof_
 
